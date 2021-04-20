@@ -2,11 +2,7 @@ FROM alpine:latest
 
 MAINTAINER horoscope.liu@gmail.com
 
-ENV TZ Asia/Shanghai
 ENV LANG=C.UTF-8
-
-RUN apk add --update --no-cache \
-    bash procps openjdk8 tzdata && ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 RUN ALPINE_GLIBC_BASE_URL="https://github.com/sgerrand/alpine-pkg-glibc/releases/download" && \
     ALPINE_GLIBC_PACKAGE_VERSION="2.33-r0" && \
@@ -41,13 +37,18 @@ RUN ALPINE_GLIBC_BASE_URL="https://github.com/sgerrand/alpine-pkg-glibc/releases
         "$ALPINE_GLIBC_BIN_PACKAGE_FILENAME" \
         "$ALPINE_GLIBC_I18N_PACKAGE_FILENAME"
 
+ENV TZ Asia/Shanghai
+
+RUN apk add --update --no-cache \
+    bash procps openjdk8 tzdata && ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
 ENV LANG=en_US.UTF-8 \
     LANGUAGE=en_US.UTF-8
 
-RUN mkdir -p /opt/zk
+RUN mkdir -p /opt
 
-ENV JAVA_HOME `$(dirname "$(readlink -f "$(which javac || which java)")")`
+ENV JAVA_HOME=/usr/lib/jvm/java-1.8-openjdk
 
-WORKDIR /opt/zk
+WORKDIR /opt
 
 CMD ["/bin/sh"]
